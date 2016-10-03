@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="order" >
+
+	<resultMap id="orderEntity" type="com.simple.model.Order" >
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="order_no" property="order_no" jdbcType="VARCHAR"/>
+		<result column="user_phone" property="user_phone" jdbcType="VARCHAR"/>
+		<result column="product_id" property="product_id" jdbcType="INTEGER"/>
+		<result column="product_name" property="product_name" jdbcType="VARCHAR"/>
+		<result column="user_name" property="user_name" jdbcType="VARCHAR"/>
+		<result column="address" property="address" jdbcType="VARCHAR"/>
+		<result column="product_count" property="product_count" jdbcType="INTEGER"/>
+		<result column="price" property="price" jdbcType="DOUBLE"/>
+		<result column="owner" property="owner" jdbcType="VARCHAR"/>
+		<result column="seller" property="seller" jdbcType="VARCHAR"/>
+		<result column="create_time" property="create_time" jdbcType="TIMESTAMP"/>
+		<result column="order_status" property="order_status" jdbcType="INTEGER"/>
+		<result column="expressage" property="expressage" jdbcType="VARCHAR"/>
+		<result column="expressage_name" property="expressage_name" jdbcType="VARCHAR"/>
+		<result column="expressage_no" property="expressage_no" jdbcType="VARCHAR"/>
+		<result column="expressage_time" property="expressage_time" jdbcType="TIMESTAMP"/>
+		<result column="reject_time" property="reject_time" jdbcType="TIMESTAMP"/>
+		<result column="reject_remark" property="reject_remark" jdbcType="VARCHAR"/>
+		<result column="apply_reject_time" property="apply_reject_time" jdbcType="TIMESTAMP"/>
+		<result column="apply_reject_reason" property="apply_reject_reason" jdbcType="INTEGER"/>
+		<result column="pay_time" property="pay_time" jdbcType="TIMESTAMP"/>
+		<result column="product_image" property="product_image" jdbcType="VARCHAR"/>
+		<result column="total_price" property="total_price" jdbcType="DOUBLE"/>
+		<result column="agent_total_charge" property="agent_total_charge" jdbcType="DOUBLE"/>
+		<result column="seller_total_charge" property="seller_total_charge" jdbcType="DOUBLE"/>
+		<result column="weixin_order_no" property="weixin_order_no" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+ 	<sql id="order_Column_List" >
+		id,order_no,user_phone,product_id,product_name,user_name,address,product_count,price,owner,seller,create_time,order_status,
+		expressage,expressage_name,expressage_no,expressage_time,reject_time,reject_remark,apply_reject_time,apply_reject_reason,pay_time,product_image,total_price,
+		agent_total_charge,seller_total_charge,weixin_order_no
+  	</sql>
+
+	<select id="queryByUserPhone" resultMap="orderEntity" parameterType="java.util.Map">
+  		select
+  		<include refid="order_Column_List"></include>
+  		from tmall_order where user_phone = #{userPhone} 
+  		<if test="order_status != null and order_status != '' " > and order_status = #{order_status}</if>
+  		order by create_time desc 
+  		limit #{startnum},#{pageSize} 
+  	</select>
+  	
+  	<select id="queryOrderCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+  		select count(1) from tmall_order where user_phone = #{userPhone} 
+  		<if test="order_status != null and order_status != '' " > and order_status = #{order_status}</if>
+  	</select>
+
+	<select id="getByCode" resultMap="orderEntity" parameterType="java.util.Map">
+		select
+  		<include refid="order_Column_List"></include>
+  		from tmall_order where order_no=#{order_no}
+	</select>
+	
+	<select id="queryAgentTotalPrice" resultType="Double" parameterType="java.util.Map">
+  		select sum(total_price) 
+  		from tmall_order where owner = #{owner} and order_status in (1,2,3,5,6) 
+  		<if test="beginTime != null and beginTime != ''" > and create_time &gt;= #{beginTime} </if>
+		<if test="endTime != null and endTime != ''" > and create_time &lt;= #{endTime} </if>
+  	</select>
+  	
+  	<select id="queryAgentTotalCharge" resultType="Double" parameterType="java.util.Map">
+  		select sum(agent_total_charge) 
+  		from tmall_order where owner = #{owner} and order_status in (1,2,3,5,6) 
+  		<if test="beginTime != null and beginTime != ''" > and create_time &gt;= #{beginTime} </if>
+		<if test="endTime != null and endTime != ''" > and create_time &lt;= #{endTime} </if>
+  	</select>
+  	
+  	<select id="querySellerTotalPrice" resultType="Double" parameterType="java.util.Map">
+  		select sum(total_price) 
+  		from tmall_order where order_status in (1,2,3,5,6)
+  		<if test="seller != null and seller != ''">and seller = #{seller}</if>
+  		<if test="owner != null and owner != ''">and owner = #{owner}</if>
+  		<if test="beginTime != null and beginTime != ''" > and create_time &gt;= #{beginTime} </if>
+		<if test="endTime != null and endTime != ''" > and create_time &lt;= #{endTime} </if>
+  	</select>
+  	
+  	<select id="querySellerTotalCharge" resultType="Double" parameterType="java.util.Map">
+  		select sum(seller_total_charge) 
+  		from tmall_order where seller = #{seller} and order_status in (1,2,3,5,6)
+  		<if test="owner != null and owner != ''">and owner = #{owner}</if>
+  	</select>
+  	
+  	<select id="queryCountByStatus" resultType="Integer" parameterType="java.util.Map">
+  		select count(1)  
+  		from tmall_order where 1=1
+  		<if test="hasPay > 0 " > and pay_time is not null and pay_time != ''</if>
+  		<if test="order_status_list != null " > 
+  			and order_status in 
+  			<foreach item="item" index="index" collection="order_status_list" open="(" separator="," close=")">  
+			  	#{item}  
+			</foreach>  
+  		</if>
+  		<if test="owner != null and owner != ''"> and owner = #{owner}</if>
+  		<if test="seller != null and seller != ''"> and seller = #{seller}</if>
+  		<if test="beginTime != null and beginTime != ''" > and create_time &gt;= #{beginTime} </if>
+		<if test="endTime != null and endTime != ''" > and create_time &lt;= #{endTime} </if>
+  	</select>
+  	
+  	<select id="queryToDoList" resultMap="orderEntity" parameterType="java.util.Map">
+  		select <include refid="order_Column_List"></include>  
+  		from tmall_order where (order_status = 1 or order_status = 5 or order_status = 6)
+  		<if test="owner != null and owner != ''"> and owner = #{owner}</if>
+  		<if test="seller != null and seller != ''"> and seller = #{seller}</if>
+  		<if test="beginTime != null and beginTime != ''" > and create_time &gt;= #{beginTime} </if>
+		<if test="endTime != null and endTime != ''" > and create_time &lt;= #{endTime} </if>
+		order by id desc 
+		limit #{begin},#{size}
+  	</select>
+  	
+  	<select id="queryListByStatus" resultMap="orderEntity" parameterType="java.util.Map">
+  		select <include refid="order_Column_List"></include>  
+  		from tmall_order where 1=1
+  		<if test="hasPay > 0 " > and pay_time is not null and pay_time != ''</if>
+  		<if test="order_status > 0 " > and order_status = #{order_status}</if>
+  		<if test="owner != null and owner != ''">and owner = #{owner}</if>
+  		<if test="seller != null and seller != ''">and seller = #{seller}</if>
+  		<if test="beginTime != null and beginTime != ''" > and create_time &gt;= #{beginTime} </if>
+		<if test="endTime != null and endTime != ''" > and create_time &lt;= #{endTime} </if>
+		order by id desc 
+		limit #{begin},#{size}
+  	</select>
+  	
+  	<select id="queryListByStatusList" resultMap="orderEntity" parameterType="java.util.Map">
+  		select <include refid="order_Column_List"></include>  
+  		from tmall_order where 1=1
+  		<if test="hasPay > 0 " > and pay_time is not null and pay_time != ''</if>
+  		<if test="order_status != null " > 
+  			and order_status in 
+  			<foreach item="item" index="index" collection="order_status" open="(" separator="," close=")">  
+			  	#{item}  
+			</foreach>  
+  		</if>
+  		<if test="owner != null and owner != ''">and owner = #{owner}</if>
+  		<if test="seller != null and seller != ''">and seller = #{seller}</if>
+  		<if test="beginTime != null and beginTime != ''" > and create_time &gt;= #{beginTime} </if>
+		<if test="endTime != null and endTime != ''" > and create_time &lt;= #{endTime} </if>
+		order by id desc 
+		limit #{begin},#{size}
+  	</select>
+  	
+  	<select id="querySendList" resultMap="orderEntity" parameterType="java.util.Map">
+  		select <include refid="order_Column_List"></include>  
+  		from tmall_order where order_status = 2
+  		<if test="owner != null and owner != ''">and owner = #{owner}</if>
+  		<if test="seller != null and seller != ''">and seller = #{seller}</if>
+  		<if test="beginTime != null and beginTime != ''" > and expressage_time &gt;= #{beginTime} </if>
+		<if test="endTime != null and endTime != ''" > and expressage_time &lt;= #{endTime} </if>
+		order by id desc 
+		limit #{begin},#{size}
+  	</select>
+  	
+  	<select id="queryToFinishList" resultMap="orderEntity" parameterType="java.util.Map">
+  		select <include refid="order_Column_List"></include>  
+  		from tmall_order where order_status in (2,6)
+  		<if test="owner != null and owner != ''">and owner = #{owner}</if>
+  		<if test="seller != null and seller != ''">and seller = #{seller}</if>
+  		<if test="beginTime != null and beginTime != ''" > and expressage_time &gt;= #{beginTime} </if>
+		<if test="endTime != null and endTime != ''" > and expressage_time &lt;= #{endTime} </if>
+		order by id desc 
+		limit #{begin},#{size}
+  	</select>
+  	
+  	<select id="queryProductCount" resultType="Integer" parameterType="java.util.Map">
+  		select count(product_id)  
+  		from tmall_order where 1=1
+  		<if test="owner != null and owner != ''">and owner = #{owner}</if>
+  		<if test="seller != null and seller != ''">and seller = #{seller}</if>
+  		<if test="order_status > 0 " > and order_status = #{order_status}</if>
+  	</select>
+
+	<insert id="insert" parameterType="com.simple.model.Order">
+		INSERT INTO tmall_order (
+			order_no,user_phone,product_id,product_name,user_name,address,product_count,price,owner,seller,create_time,
+			order_status,expressage,expressage_name,expressage_no,expressage_time,reject_time,reject_remark,apply_reject_time,apply_reject_reason,pay_time,
+			product_image,total_price,agent_total_charge,seller_total_charge,weixin_order_no
+		) 
+		VALUES (
+			#{order_no,},#{user_phone},#{product_id},#{product_name},#{user_name},#{address},#{product_count},#{price},#{owner},#{seller},#{create_time},
+			#{order_status},#{expressage},#{expressage_name},#{expressage_no},#{expressage_time},#{reject_time},#{reject_remark},#{apply_reject_time},#{apply_reject_reason},
+			#{pay_time},#{product_image},#{total_price},#{agent_total_charge},#{seller_total_charge},#{weixin_order_no}
+		)
+	</insert>	
+	
+	<update id="sendOrder" parameterType="com.simple.model.Order">
+		UPDATE tmall_order SET order_status = #{order_status},expressage=#{expressage},
+		expressage_name=#{expressage_name},expressage_no=#{expressage_no},expressage_time=#{expressage_time}
+		WHERE order_no = #{order_no} and order_status = 1
+	</update>
+	
+	<update id="updateReject" parameterType="com.simple.model.Order">
+		UPDATE tmall_order 
+		SET order_status = #{order_status},
+		agent_total_charge = #{agent_total_charge},
+		seller_total_charge = #{seller_total_charge},
+		total_price = #{total_price},
+		apply_reject_reason = #{apply_reject_reason}
+		WHERE order_no = #{order_no} and order_status = 2
+	</update>
+	
+	<update id="updateRejectSuccess" parameterType="com.simple.model.Order">
+		UPDATE tmall_order 
+		SET order_status = #{order_status},
+		agent_total_charge = #{agent_total_charge},
+		seller_total_charge = #{seller_total_charge},
+		total_price = #{total_price}
+		WHERE order_no = #{order_no} and order_status = 5
+	</update>
+	
+	<update id="updateRejectRefuse" parameterType="com.simple.model.Order">
+		UPDATE tmall_order 
+		SET order_status = #{order_status}
+		<if test="reject_remark != null and reject_remark != ''"> ,reject_remark = #{reject_remark}</if>
+		WHERE order_no = #{order_no} and order_status = 5 
+	</update>
+	
+	<update id="updateCancel" parameterType="com.simple.model.Order">
+		UPDATE tmall_order 
+		SET order_status = #{order_status},
+		agent_total_charge = #{agent_total_charge},
+		seller_total_charge = #{seller_total_charge},
+		total_price = #{total_price}
+		WHERE order_no = #{order_no} and (order_status = 1 or order_status = 7) 
+	</update>
+	
+	<update id="updateFinish" parameterType="com.simple.model.Order">
+		UPDATE tmall_order 
+		SET order_status = #{order_status}
+		WHERE order_no = #{order_no} and (order_status != 4 and order_status != 3) 
+	</update>
+	
+	<update id="payOrder" parameterType="com.simple.model.Order">
+		UPDATE tmall_order SET order_status = #{order_status},pay_time = #{pay_time}
+		WHERE order_no = #{order_no}
+	</update>
+	
+	<select id="queryMyOrders" resultMap="orderEntity" parameterType="java.util.Map">
+  		select <include refid="order_Column_List"></include>  
+  		from tmall_order where user_phone = #{userPhone} and pay_time is not null and pay_time != ''
+  		order by id desc 
+		limit #{begin},#{size}
+  	</select>
+  	
+  	<update id="setWeixinNo" parameterType="com.simple.model.Order">
+		UPDATE tmall_order SET weixin_order_no = #{weixin_order_no}
+		WHERE order_no = #{order_no}
+	</update>
+	
+</mapper>

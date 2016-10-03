@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="agentSeller" >
+
+	<resultMap id="BaseResultMap" type="com.simple.model.AgentSeller" >
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="agent_phone" property="agentPhone" jdbcType="VARCHAR" />
+		<result column="seller_phone" property="sellerPhone" jdbcType="VARCHAR" />
+		<result column="charge_percent" property="chargePercent" jdbcType="VARCHAR" />
+		<result column="agent_name" property="agentName" jdbcType="VARCHAR" />
+		<result column="seller_name" property="sellerName" jdbcType="VARCHAR" />
+		<result column="allow_sell" property="allowSell" jdbcType="INTEGER" />
+		<result column="watch_count" property="watchCount" jdbcType="INTEGER" />
+	</resultMap>
+	
+<!-- 	<resultMap type="com.simple.model.SellerJoinHeadVO" id="SellerJoinHeadVO"> -->
+<!-- 		<result column="userPhone" property="userPhone" jdbcType="VARCHAR" /> -->
+<!-- 		<result column="wechatNo" property="wechatNo" jdbcType="VARCHAR" /> -->
+<!-- 		<result column="category" property="category" jdbcType="VARCHAR" /> -->
+<!-- 		<result column="countSelling" property="countSelling" jdbcType="INTEGER" /> -->
+<!-- 		<result column="chargePst" property="chargePst" jdbcType="DOUBLE" /> -->
+<!-- 		<result column="isJoin" property="isJoin" jdbcType="INTEGER" /> -->
+<!-- 	</resultMap> -->
+
+	<sql id="user_Column_List" >
+		id, agent_phone,seller_phone,charge_percent,agent_name,seller_name,allow_sell,watch_count
+	</sql>
+
+	<select id="queryByAgent" parameterType="String" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="user_Column_List"></include>
+		FROM agent_seller where agent_phone = #{userPhone}
+	</select>
+	
+	<select id="queryBySeller" parameterType="String" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="user_Column_List"></include>
+		FROM agent_seller where seller_phone = #{userPhone}
+	</select>
+	
+	<select id="querySumWatchCount" parameterType="String" resultType="Integer">
+		SELECT sum(watch_count) FROM agent_seller where  agent_phone = #{userPhone}
+	</select>
+	
+	<select id="queryCountByPhone" parameterType="java.util.Map" resultType="Integer">
+		SELECT count(1) FROM agent_seller where 1=1
+		<if test="owner != null and owner != ''">and agent_phone = #{owner}</if>
+		<if test="seller != null and seller != ''">and seller_phone = #{seller}</if>
+	</select>
+	
+	<select id="queryByPhone" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="user_Column_List"></include>
+		FROM agent_seller where 1=1
+		<if test="owner != null and owner != ''">and agent_phone = #{owner}</if>
+		<if test="seller != null and seller != ''">and seller_phone = #{seller}</if>
+		limit #{begin},#{end}
+	</select>
+
+	<insert id="insert" parameterType="com.simple.model.AgentSeller">
+		INSERT INTO agent_seller (agent_phone,seller_phone,agent_name,seller_name,charge_percent) 
+		VALUES (#{agentPhone},#{sellerPhone},#{agentName},#{sellerName},#{chargePercent})
+	</insert>	
+	
+	<delete id="delete" parameterType="com.simple.model.AgentSeller">
+		delete from agent_seller where id = #{id} and agent_phone = #{agentPhone} and seller_phone = #{sellerPhone}
+	</delete>
+	
+	<update id="updatePercent" parameterType="java.util.Map">
+		update agent_seller set charge_percent = #{chargePercent} 
+		where agent_phone = #{agentPhone} 
+		<if test="sellerPhone != null and sellerPhone !=''" > and seller_phone = #{sellerPhone} </if>
+	</update>
+	
+	<update id="updateAllow" parameterType="java.util.Map">
+		update agent_seller set allow_sell = #{allow} 
+		where agent_phone = #{agentPhone} 
+		<if test="sellerPhone != null and sellerPhone !=''" > and seller_phone = #{sellerPhone} </if>
+	</update>
+	
+	<update id="increaseWatchCount" parameterType="java.util.Map">
+		update agent_seller set watch_count = watch_count+1
+		where agent_phone = #{agentPhone} and seller_phone = #{sellerPhone}
+	</update>
+	
+	
+</mapper>

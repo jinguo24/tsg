@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="base" >
+
+	<resultMap id="bankEntity" type="com.simple.model.Bank" >
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR"/>
+		<result column="code" property="code" jdbcType="VARCHAR"/>
+	</resultMap>
+
+ 	<sql id="bank_column_list" >
+		id,name,code
+  	</sql>
+
+	<select id="getBankList" resultMap="bankEntity" parameterType="com.simple.model.Bank">
+  		select
+  		<include refid="bank_column_list"></include>
+  		from base_bank 
+  	</select>
+  	
+  	<select id="getBankByCode" resultMap="bankEntity" parameterType="String">
+  		select
+  		<include refid="bank_column_list"></include>
+  		from base_bank where code=#{code} limit 0,1
+  	</select>
+  	
+	<select id="getByBankId" resultMap="bankEntity" parameterType="com.simple.model.Bank">
+  		select
+  		<include refid="bank_column_list"></include>
+  		from base_bank 
+  		where id=#{id} 
+  	</select>
+
+	<insert id="bankIst" parameterType="com.simple.model.Bank">
+		INSERT INTO base_bank(name,code)
+		VALUES(#{name},#{code})
+	</insert>
+		
+	<update id="bankUpd" parameterType="com.simple.model.Bank">
+		UPDATE base_bank SET
+			name = #{name},
+			code = #{code}
+		WHERE 
+			id=#{id}
+	</update>
+	
+	<delete id="bankDel" parameterType="com.simple.model.Bank">
+		DELETE FROM base_bank WHERE id=#{id}
+	</delete>	
+</mapper>

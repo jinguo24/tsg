@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="product" >
+
+	<resultMap id="productEntity" type="com.simple.model.Product" >
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="stock" property="stock" jdbcType="INTEGER" />
+		<result column="price" property="price" jdbcType="DOUBLE" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="tip" property="tip" jdbcType="VARCHAR" />
+		<result column="product_status" property="productStatus" jdbcType="INTEGER" />
+		<result column="owner" property="owner" jdbcType="VARCHAR" />
+		<result column="thumbnail" property="firstImg" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="productImage" type="com.simple.model.ProductImage" >
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="product_id" property="productId" jdbcType="INTEGER" />
+		<result column="image" property="image" jdbcType="VARCHAR" />
+	</resultMap>
+
+ 	<sql id="product_Column_List" >
+		id,name,stock,price,description,tip,product_status,owner,thumbnail
+  	</sql>
+  	
+  	<sql id="productImage_Column_List" >
+		id,product_id,image
+  	</sql>
+
+	<select id="queryById" resultMap="productEntity" parameterType="Integer">
+  		select
+  		<include refid="product_Column_List"></include>
+  		from product where id = #{id}
+  	</select>
+
+	<select id="queryOwners" resultType="String">
+  		select distinct owner from product limit #{begin}, #{end}
+  	</select>
+  	
+  	<select id="queryList" resultMap="productEntity">
+  		select
+  		<include refid="product_Column_List"></include>
+  		from product where 1=1 
+		 <if test="name != null and name != ''" > and name like CONCAT('%',#{name},'%')</if>
+		 <if test="owner != null and owner != ''" > and owner like CONCAT('%',#{owner},'%')</if>
+		 <if test="productStatus > 0 " > and product_status = #{productStatus}</if>
+		 order by id desc limit #{startnum},#{pageSize} 
+  	</select>
+  	
+  	<select id="queryCount" resultType="Integer">
+  		select count(1) 
+  		from product where 1=1
+  		 <if test="name != null and name != ''" > and name like CONCAT('%',#{name},'%')</if>
+		 <if test="owner != null and owner != ''" > and owner like CONCAT('%',#{owner},'%')</if>
+		 <if test="productStatus > 0 " > and product_status = #{productStatus}</if>
+  	</select>
+  	
+ 	<select id="queryByOwner" resultMap="productEntity">
+  		select
+  		<include refid="product_Column_List"></include>
+  		from product where owner in 
+  		<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">  
+		  #{item}  
+		 </foreach> 
+		 <if test="checkStock > 0" > and stock > 0</if>
+		 <if test="name != null and name != ''" > and name like CONCAT('%',#{name},'%')</if>
+		 <if test="productStatus > 0 " > and product_status = #{productStatus}</if>
+		 order by id desc limit #{startnum},#{pageSize} 
+  	</select>
+  	
+  	<select id="queryCountByOwner" resultType="Integer">
+  		select count(1) 
+  		from product where owner in 
+  		<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">  
+		  #{item}  
+		 </foreach> 
+		 <if test="name != null and name != ''" > and name like CONCAT('%',#{name},'%')</if>
+		 <if test="productStatus > 0 " > and product_status = #{productStatus}</if>
+  	</select>
+  	
+  	<select id="queryNoStock" resultType="Integer" parameterType="String">
+  		select count(1) 
+  		from product where owner = #{phone} and stock &lt;=0
+  	</select>
+  	
+  	
+	<insert id="insert" parameterType="com.simple.model.Product" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO product (name,stock,price,description,tip,product_status,owner,thumbnail) 
+		VALUES (#{name},#{stock},#{price},#{description},#{tip},#{productStatus},#{owner},#{firstImg})
+	</insert>	
+	
+	<update id="update" parameterType="com.simple.model.Product">
+		UPDATE product SET 
+			name = #{name},
+			stock = #{stock},
+			price = #{price},
+			description = #{description},
+			tip = #{tip},
+			product_status = #{productStatus},
+			thumbnail = #{firstImg}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="reduceStock" parameterType="java.util.Map">
+		UPDATE product SET stock = stock-#{productCount} where id = #{id} and stock >= #{productCount} 
+	</update>
+	
+	<update id="increaseStock" parameterType="java.util.Map">
+		UPDATE product SET stock = stock + #{productCount} where id = #{id} and stock >= 0 
+	</update>
+	
+	<insert id="insertImage" parameterType="com.simple.model.ProductImage">
+		INSERT INTO product_image (product_id,image) 
+		VALUES (#{productId},#{image})
+	</insert>
+	
+	<delete id="deleteImage" parameterType="Integer">
+		delete from product_image where product_id  = #{productId}
+	</delete>
+	
+	<update id="updatestatus" >
+		UPDATE product SET product_status = #{productStatus} where id = #{id}
+	</update>
+	
+	<select id="queryImage" parameterType="Integer" resultMap="productImage">
+		select <include refid="productImage_Column_List"></include>
+		from product_image where product_id = #{productId}
+	</select>
+	
+</mapper>

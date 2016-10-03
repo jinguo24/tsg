@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="user" >
+
+	<resultMap id="BaseResultMap" type="com.simple.model.User" >
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_name" property="userName" jdbcType="VARCHAR" />
+		<result column="user_nick" property="userNick" jdbcType="VARCHAR" />
+		<result column="user_phone" property="userPhone" jdbcType="VARCHAR" />
+		<result column="user_tel" property="userTel" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="wechat_no" property="weChatNo" jdbcType="VARCHAR" />
+		<result column="ID_card" property="IDCard" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="register_date" property="registerDate" jdbcType="DATE" />
+		<result column="salt" property="salt" jdbcType="VARCHAR" />
+		<result column="balance" property="blance" jdbcType="DOUBLE" />
+		<result column="category" property="category" jdbcType="VARCHAR" />
+		<result column="allow_sell" property="allowSell" jdbcType="INTEGER" />
+		<result column="charge_percent" property="chargePrecent" jdbcType="DOUBLE" />
+		<result column="headimg" property="headimg" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="user_Column_List" >
+		id, user_name,user_nick, user_phone, user_tel, password, wechat_no, 
+		ID_card, address, register_date, salt, balance, category,allow_sell,charge_percent,headimg,status
+	</sql>
+
+	<select id="getList" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="user_Column_List"></include>
+		FROM user where 1=1
+		 <if test="phone != null and phone != ''" > and user_phone like CONCAT('%',#{phone},'%')</if>
+		 <if test="userStatus > 0" > and status = #{userStatus}</if>
+		 order by id desc limit #{startnum},#{pageSize} 
+	</select>
+
+	<select id="getCount" resultType="Integer">
+  		select count(1) 
+  		from user where 1=1
+  		<if test="phone != null and phone != ''" > and user_phone like CONCAT('%',#{phone},'%')</if>
+  		<if test="userStatus > 0" > and status = #{userStatus}</if>
+  	</select>
+
+	<select id="getById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="user_Column_List"></include>
+		FROM user
+		WHERE id=#{id}
+	</select>
+	
+	<select id="selectOne" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="user_Column_List"></include>
+		FROM user
+		WHERE 1=1
+		<if test="userPhone != null and userPhone != ''"> AND user_phone = #{userPhone}</if>
+		<if test="status > 0 "> AND status = #{status}</if>
+	</select>
+
+	<insert id="createRegister" parameterType="com.simple.model.User">
+		INSERT INTO user (user_name,user_phone,user_nick,user_tel,password,
+			wechat_no,ID_card,address,register_date,salt,balance,category,allow_sell,charge_percent,headimg,status) 
+		VALUES (#{userName},#{userPhone},#{userNick},#{userTel},#{password},
+			#{weChatNo},#{IDCard},#{address},#{registerDate},#{salt},#{blance},#{category},#{allowSell},#{chargePrecent},#{headimg},#{status})
+	</insert>	
+	
+	<update id="modify" parameterType="com.simple.model.User">
+		UPDATE user SET 
+			user_name = #{userName},
+			user_nick = #{userNick},
+			user_tel = #{userTel},
+			password = #{password},
+			wechat_no = #{weChatNo},
+			ID_card = #{IDCard},
+			address = #{address},
+			balance = #{blance},
+			category = #{category},
+			allow_sell = #{allowSell},
+			charge_percent = #{chargePrecent},
+			headimg = #{headimg}
+		WHERE user_phone = #{userPhone}
+	</update>
+	
+	<update id="updateAllow" parameterType="java.util.Map">
+		update user set allow_sell = #{allow} 
+		where user_phone = #{userPhone} 
+	</update>
+	
+	<update id="updateStatus" parameterType="java.util.Map">
+		update user set status = #{status} 
+		where user_phone = #{userPhone} 
+	</update>
+	
+	<update id="updatePercent" parameterType="java.util.Map">
+		update user set charge_percent = #{percent} 
+		where user_phone = #{userPhone} 
+	</update>
+	
+	<update id="increseCharge" parameterType="java.util.Map">
+		update user set balance = balance+#{charge}
+		where user_phone = #{userPhone}
+	</update>
+	
+	<update id="reduceBlance" parameterType="java.util.Map">
+		update user set balance = balance-#{amount}
+		where user_phone = #{userPhone}
+	</update>
+	
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="charge" >
+	<resultMap id="chargeEntity" type="com.simple.model.Charge" >
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="charge" property="charge" jdbcType="DOUBLE"/>
+	</resultMap>
+
+ 	<sql id="account_column_list" >
+		id,charge
+  	</sql>
+
+	<select id="query" resultMap="chargeEntity">
+  		select
+  		<include refid="account_column_list"></include>
+  		from charge 
+  		limit 0,1
+  	</select>
+</mapper>
