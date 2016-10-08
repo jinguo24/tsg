@@ -1,4 +1,4 @@
-package com.simple.admin.controller;
+﻿package com.simple.admin.controller;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,9 +28,9 @@ import com.simple.service.OrderService;
 import com.simple.service.ProductService;
 import com.simple.service.UserService;
 
-@Controller
+@Controller    
 @RequestMapping(value = "/agentSeller")
-public class AgentSellerController {
+public class AgentSellerController {   
 	
 	private static final Logger log = LoggerFactory.getLogger(AgentSellerController.class);
 
