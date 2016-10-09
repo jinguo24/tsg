@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
 		">
-	 	<task:scheduled-tasks>
-			<task:scheduled ref="orderTask" method="cancelUnPayOrder"  cron="0 */1 * * * ?"/>
-			<task:scheduled ref="orderTask" method="cancelToSendOrder"  cron="0 */1 * * * ?"/>
-			<task:scheduled ref="orderTask" method="finishOrder"  cron="0 */1 * * * ?"/>
-			<task:scheduled ref="smsTask" method="overage"  cron="0 0 0 */1 * ?"/>
-			<task:scheduled ref="weixinTask" method="initGlobalAccessToken"  cron="0 0 */1 * * ?"/>
-			<task:scheduled ref="weixinTask" method="initJsTicket"  cron="0 0 */1 * * ?"/>
-		</task:scheduled-tasks>
+<!-- 	 	<task:scheduled-tasks> -->
+<!-- 			<task:scheduled ref="orderTask" method="cancelUnPayOrder"  cron="0 */1 * * * ?"/> -->
+<!-- 			<task:scheduled ref="orderTask" method="cancelToSendOrder"  cron="0 */1 * * * ?"/> -->
+<!-- 			<task:scheduled ref="orderTask" method="finishOrder"  cron="0 */1 * * * ?"/> -->
+<!-- 			<task:scheduled ref="smsTask" method="overage"  cron="0 0 0 */1 * ?"/> -->
+<!-- 			<task:scheduled ref="weixinTask" method="initGlobalAccessToken"  cron="0 0 */1 * * ?"/> -->
+<!-- 			<task:scheduled ref="weixinTask" method="initJsTicket"  cron="0 0 */1 * * ?"/> -->
+<!-- 		</task:scheduled-tasks> -->
 </beans>
