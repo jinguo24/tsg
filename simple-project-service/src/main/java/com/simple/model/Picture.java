@@ -1,5 +1,6 @@
 package com.simple.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Picture  extends AbstractBaseModel{
@@ -28,8 +29,8 @@ public class Picture  extends AbstractBaseModel{
         this.url = url == null ? null : url.trim();
     }
 
-    public Date getCreateTime() {
-        return createTime;
+    public String getCreateTime() {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(this.createTime);
     }
 
     public void setCreateTime(Date createTime) {
