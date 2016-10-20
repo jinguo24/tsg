@@ -162,8 +162,6 @@ public class UserController {
 		}catch(Exception e){
 			return AjaxWebUtil.sendAjaxResponse(request, response, false, "重置密码失败", id);
 		}
-		
-		
 	}
 	
 	/**
@@ -185,15 +183,8 @@ public class UserController {
 		}
 	}
 	
-	
-	
 	public static String getMD5Password(String password) {
 		return MD5Util.MD5Encode(password, Constant.MD5_KEY);
 	}
-
 	
-	public static void main(String[] args) {
-		String md5Password = getMD5Password("123456");
-		System.out.println(md5Password);
-	}
 }
