@@ -3,6 +3,11 @@ package com.simple.model;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * 轮播图
+ * @author Administrator
+ *
+ */
 public class Picture  extends AbstractBaseModel{
 
 	private static final long serialVersionUID = 6024785169809433293L;
@@ -10,8 +15,19 @@ public class Picture  extends AbstractBaseModel{
     private String name;//名称
 
     private String url;//图片地址
+    
+    private String link;//链接地址
 
     private Date createTime;//创建时间
+    
+    
+    public String getLink() {
+  		return link;
+  	}
+
+  	public void setLink(String link) {
+  		this.link = link;
+  	}
 
     public String getName() {
         return name;
