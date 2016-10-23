@@ -88,6 +88,20 @@ public class UserController {
 	public String add(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			// TODO
+			ResponseInfo ri  = tclassService.validateFile(file,tanentId,njbh);
+			if ( null != ri && ri.getStatus().getState()) {
+				ClassRegister cr = classRegistorService.getClassRegister(tanentId, null);
+				tclassService.addTClass((List<TClass>)ri.getData(),LoginUserUtil.getLeaseholderId(request),
+						cr.getXxbh(),cr.getXxmc(),LoginUserUtil.getCurrentUser(request).getName());
+			}else if ( null != ri && (!ri.getStatus().getState())) {
+				return AjaxWebUtil.sendAjaxResponse(request, response, false,ri.getStatus().getCode(),"创建失败", ri.getData());
+			}
+			
+			
+			
+			
+			
+			
 			List<User> users = new ArrayList<>();
 			for (User u : users) {
 				u.setPassword(getMD5Password(u.getPassword()));
