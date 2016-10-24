@@ -1,11 +1,20 @@
 package com.simple.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.simple.common.excel.DownLoadExcel;
+import com.simple.common.excel.DownLoadExcutor;
+import com.simple.common.excel.ObjectExcutor;
+import com.simple.common.excel.ReadExcel;
 import com.simple.common.util.ResponseInfo;
 import com.simple.dao.UserDao;
 import com.simple.model.PageResult;
@@ -71,19 +80,17 @@ public class UserService {
 		userDao.updatePwd(user);
 	}
 	
-	public ResponseInfo download(TClass tclass,int pageIndex,int pageSize) {
-		List<TClass> templateList =  classDao.query(tclass, pageIndex, pageSize);
-		String[] titles = new String[]{"学年","班级编号","班级名称","班主任工号","班主任姓名"};
+	public ResponseInfo download(User tclass,int pageIndex,int pageSize) {
+		List<User> templateList = userDao.findListByParams(tclass.getCode(),tclass.getName(),tclass.getIsSuperUser(), pageIndex, pageSize);
+		String[] titles = new String[]{"工号","姓名","是否是超级用户"};
 		return DownLoadExcel.download(templateList, Arrays.asList(titles), new DownLoadExcutor() {
 			@Override
 			public List<String> getCellValues(Object o) {
-				TClass log = (TClass) o;
+				User log = (User) o;
 				List<String> sl = new ArrayList<String>();
-				sl.add(String.valueOf(log.getXn()));
-				sl.add(log.getBjbh());
-				sl.add(log.getBjmc());
-				sl.add(log.getGh());
-				sl.add(log.getXm());
+				sl.add(log.getCode());
+				sl.add(log.getName());
+				sl.add(log.getIsSuperUser()==1?"是":"否");
 				return sl;
 			}
 		});
@@ -95,48 +102,37 @@ public class UserService {
 		return ReadExcel.read(new FileInputStream(file),new ObjectExcutor(){
 				@Override
 				public Object getObject(List<String> cellValues) {
-						String xn = null;
+						String code = null;
 						if (cellValues.size() > 0 ) {
-								xn = StringUtils.trimToNull(cellValues.get(0));
+								code = StringUtils.trimToNull(cellValues.get(0));
 						}
-						String njmc = dictionaryDao.queryByCode(njbh).getName();
-						String bjbh = null;
+//						String njmc = dictionaryDao.queryByCode(njbh).getName();
+						String name = null;
 						if (cellValues.size() > 1) {
-								bjbh = StringUtils.trimToNull(cellValues.get(1));
+								name = StringUtils.trimToNull(cellValues.get(1));
 						}
-						String bjmc = null;
+						String isSuperUser = null;
 						if (cellValues.size() > 2) {
-								bjmc = StringUtils.trimToNull(cellValues.get(2));
+							isSuperUser = StringUtils.trimToNull(cellValues.get(2));
 						}
 						
-						String gh = null;
-						if (cellValues.size() > 3) {
-								gh = StringUtils.trimToNull(cellValues.get(3));
-						}
-						String xm = null;
-						if (cellValues.size() > 4) {
-								xm = StringUtils.trimToNull(cellValues.get(4));
-						}
+
 						StringBuffer errormsg = new StringBuffer();
 						boolean ispass = true;
-						TClass tclass = null;
-						if ( null == xn && null == bjbh && null == bjmc && null == gh && null == xm ) {
+						User tclass = null;
+						if ( null == code && null == name && null == isSuperUser ) {
 							return null;
 						}
-						if ( null != xn && null != njbh && null != njmc && null != bjbh && null != bjmc && null != gh && null != xm) {
-							tclass = new TClass();
+						if ( null != code && null != name && null != isSuperUser ) {
+							tclass = new User();
 							try {
-								tclass.setXn(Integer.parseInt(xn));
+								tclass.setIsSuperUser(Integer.parseInt(isSuperUser));
 							}catch(Exception e) {
 								errormsg.append("列[1]：请填写整数;");
 								ispass = false;
 							}
-							tclass.setNjbh(njbh);
-							tclass.setNjmc(njmc);
-							tclass.setBjbh(bjbh);
-							tclass.setBjmc(bjmc);
-							tclass.setGh(gh);
-							tclass.setXm(xm);
+							tclass.setCode(code);
+							tclass.setName(name);
 							//boolean exists = isExists(leaseholderId,bjbh,Integer.parseInt(xn));
 							//if (exists) {
 							//	ispass = false;

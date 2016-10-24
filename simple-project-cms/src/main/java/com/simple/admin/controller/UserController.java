@@ -1,28 +1,33 @@
 package com.simple.admin.controller;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.simple.common.config.EnvPropertiesConfiger;
 import com.simple.common.util.AjaxWebUtil;
+import com.simple.common.util.ResponseInfo;
 import com.simple.constant.Constant;
 import com.simple.model.PageResult;
 import com.simple.model.User;
 import com.simple.service.UserService;
 import com.simple.weixin.util.MD5Util;
-
-import ch.epfl.lamp.fjbg.Main;
 
 @Controller
 @RequestMapping("user")
@@ -32,8 +37,7 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
-//	@Autowired
-//	private EnvPropertiesConfiger en;
+ 
 	/**
 	 * 查询用户列表
 	 * 
@@ -85,26 +89,20 @@ public class UserController {
 	 */
 	@RequestMapping(value = "upload", method = RequestMethod.POST)
 	@ResponseBody
-	public String add(HttpServletRequest request, HttpServletResponse response) {
+	public String add(HttpServletRequest request, HttpServletResponse response,@RequestParam("file") MultipartFile  files) {
 		try {
-			// TODO
-			ResponseInfo ri  = tclassService.validateFile(file,tanentId,njbh);
+			CommonsMultipartFile cf= (CommonsMultipartFile)files; //这个myfile是MultipartFile的
+	        DiskFileItem fi = (DiskFileItem)cf.getFileItem(); 
+	        File file = fi.getStoreLocation();
+			ResponseInfo ri  = userService.validateFile(file);
+			List<User> users = new ArrayList<>();
 			if ( null != ri && ri.getStatus().getState()) {
-				ClassRegister cr = classRegistorService.getClassRegister(tanentId, null);
-				tclassService.addTClass((List<TClass>)ri.getData(),LoginUserUtil.getLeaseholderId(request),
-						cr.getXxbh(),cr.getXxmc(),LoginUserUtil.getCurrentUser(request).getName());
+				users =(List<User>)ri.getData();
 			}else if ( null != ri && (!ri.getStatus().getState())) {
 				return AjaxWebUtil.sendAjaxResponse(request, response, false,ri.getStatus().getCode(),"创建失败", ri.getData());
 			}
-			
-			
-			
-			
-			
-			
-			List<User> users = new ArrayList<>();
 			for (User u : users) {
-				u.setPassword(getMD5Password(u.getPassword()));
+				u.setPassword(getMD5Password(EnvPropertiesConfiger.getValue("initPassword")));
 			}
 			userService.addList(users);
 			return AjaxWebUtil.sendAjaxResponse(request, response, true, "上传成功", users);
@@ -145,15 +143,37 @@ public class UserController {
 	@ResponseBody
 	public String update(HttpServletRequest request, HttpServletResponse response,User user){
 		try {
-			User u = userService.findByCode(user.getCode());
-			if(u!=null){
-				return AjaxWebUtil.sendAjaxResponse(request, response, false, "工号已经存在", user);
-			}
+//			User u = userService.findByCode(user.getCode());
+//			if(u!=null){
+//				return AjaxWebUtil.sendAjaxResponse(request, response, false, "工号已经存在", user);
+//			}
 			userService.updateByParams(user);
 			return AjaxWebUtil.sendAjaxResponse(request, response, true, "更新成功", user);
 		} catch (Exception e) {
 			log.error("更新用户失败", e);
 			return AjaxWebUtil.sendAjaxResponse(request, response, false, "更新失败", e.getMessage());
+		}
+	}
+	
+	/**
+	 * 校验工号是否存在
+	 * @param request
+	 * @param response
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "vaildCode", method = RequestMethod.POST)
+	@ResponseBody
+	public String vaildCode(HttpServletRequest request, HttpServletResponse response,User user){
+		try {
+			User u = userService.findByCode(user.getCode());
+			if(u!=null){
+				return AjaxWebUtil.sendAjaxResponse(request, response, false, "工号已经存在", user);
+			}
+			return AjaxWebUtil.sendAjaxResponse(request, response, true, "成功", user);
+		} catch (Exception e) {
+			log.error("更新用户失败", e);
+			return AjaxWebUtil.sendAjaxResponse(request, response, false, "失败", e.getMessage());
 		}
 	}
 	
