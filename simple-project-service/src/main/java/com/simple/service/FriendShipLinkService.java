@@ -1,30 +1,40 @@
 package com.simple.service;
 
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.simple.dao.FriendShipLinkDao;
 import com.simple.model.FriendShipLink;
+import com.simple.model.Picture;
 
 @Service
 public class FriendShipLinkService {
-    void deleteByPrimaryKey(Integer id){
-    	
-    }
-
-    void insert(FriendShipLink record){
-    	
-    }
-
-    void insertSelective(FriendShipLink record){
-    	
-    }
-    FriendShipLink selectByPrimaryKey(Integer id){
-    	return null;
-    }
-    void updateByPrimaryKeySelective(FriendShipLink record){
-    	
-    }
-    void updateByPrimaryKey(FriendShipLink record){
-    	
-    }
+	
+	@Autowired
+	private FriendShipLinkDao dao;
+	
+	public void add(FriendShipLink link){
+		link.setCreateTime(new Date());
+		dao.add(link);
+	}
+	
+	public FriendShipLink findById(Integer id){
+		return dao.findById(id);
+	}
+	
+	public List<FriendShipLink> findList(){
+		return dao.findList();
+	}
+	
+	public void update(FriendShipLink link){
+		dao.update(link);
+	}
+	
+	public void delete(Integer id){
+		dao.delete(id);
+	}
     
 }

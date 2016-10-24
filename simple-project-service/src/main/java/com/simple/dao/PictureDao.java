@@ -22,7 +22,7 @@ public class PictureDao extends BaseIbatisDao{
 	}
 	
 	public List<Picture> findList(){
-		return this.sqlSession.selectList("selectList");
+		return this.sqlSession.selectList("picture.selectList");
 	}
 	
 	public void update(Picture pic){
