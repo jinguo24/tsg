@@ -80,6 +80,16 @@ public class UserService {
 		userDao.updatePwd(user);
 	}
 	
+	public boolean checkLogin(String code,String password){
+		User user = userDao.findByCode(code);
+		if(password.equals(user.getPassword())){
+			return true;
+		}
+		return false;
+	}
+	
+	
+	
 	public ResponseInfo download(User tclass,int pageIndex,int pageSize) {
 		List<User> templateList = userDao.findListByParams(tclass.getCode(),tclass.getName(),tclass.getIsSuperUser(), pageIndex, pageSize);
 		String[] titles = new String[]{"工号","姓名","是否是超级用户"};
