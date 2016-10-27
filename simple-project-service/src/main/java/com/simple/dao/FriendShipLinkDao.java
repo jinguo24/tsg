@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 import com.simple.common.mybatis.annotation.DatabaseTemplate;
 import com.simple.common.mybatis.dao.BaseIbatisDao;
 import com.simple.model.FriendShipLink;
-import com.simple.model.Picture;
 
 @Repository
 @DatabaseTemplate("st_all")

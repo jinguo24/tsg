@@ -45,7 +45,7 @@ public class UserController {
 	 * @param response
 	 * @return
 	 */
-	@RequestMapping(value = "findList", method = RequestMethod.POST)
+	@RequestMapping(value = "findList", method = RequestMethod.GET)
 	@ResponseBody
 	public String findList(HttpServletRequest request, HttpServletResponse response, String code,String name, Integer isSuperUser,
 			int pageIndex, int pageSize) {

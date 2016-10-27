@@ -1,11 +1,19 @@
 package com.simple.model;
+
+import java.io.Serializable;
+
 /**
  * 用户
  * @author Administrator
  *
  */
-public class User {
-    private Integer id;//id
+public class User implements Serializable{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1555937003009969113L;
+
+	private Integer id;//id
 
     private String code;//工号
     
