@@ -82,6 +82,9 @@ public class UserService {
 	
 	public boolean checkLogin(String code,String password){
 		User user = userDao.findByCode(code);
+		if ( null == user) {
+			return false;
+		}
 		if(password.equals(user.getPassword())){
 			return true;
 		}
