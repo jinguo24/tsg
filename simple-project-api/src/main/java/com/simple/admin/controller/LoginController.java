@@ -51,7 +51,7 @@ public class LoginController {
 			return AjaxWebUtil.sendAjaxResponse(request, response, false,"请输入密码", null);
 		}
 		
-		boolean ispass = userService.checkLogin(account, password);
+		boolean ispass = userService.checkLogin(account, getMD5Password(password));
 		if (!ispass) {
 			return AjaxWebUtil.sendAjaxResponse(request, response, false,"登录失败：用户不存在或者密码错误", null);
 		}else {
