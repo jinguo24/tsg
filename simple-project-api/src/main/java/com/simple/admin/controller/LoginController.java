@@ -60,6 +60,8 @@ public class LoginController {
 			lu.setCode(account);
 			lu.setName(user.getName());
 			lu.setIsSuperUser(lu.getIsSuperUser());
+			lu.setIsAdmin(user.getIsAdmin());
+			lu.setIsAdminSuper(user.getIsAdminSuper());
 			LoginUserUtil.setCurrentUser(request, lu);
 			return AjaxWebUtil.sendAjaxResponse(request, response, true,"登录成功", lu);
 		}

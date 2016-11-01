@@ -22,6 +22,11 @@ public class User implements Serializable{
     private String password;//密码
 
     private Integer isSuperUser;//是否是超级用户  0：否   1:是
+    
+    private Integer isAdmin;//是否后台用户 0:否 1:是
+     
+    private Integer isAdminSuper;//是否后台超级用户 0:否 1:是
+    
 
     public Integer getId() {
         return id;
@@ -62,6 +67,20 @@ public class User implements Serializable{
 	public void setName(String name) {
 		this.name = name;
 	}
-    
-    
+
+	public Integer getIsAdmin() {
+		return isAdmin;
+	}
+
+	public void setIsAdmin(Integer isAdmin) {
+		this.isAdmin = isAdmin;
+	}
+
+	public Integer getIsAdminSuper() {
+		return isAdminSuper;
+	}
+
+	public void setIsAdminSuper(Integer isAdminSuper) {
+		this.isAdminSuper = isAdminSuper;
+	}
 }

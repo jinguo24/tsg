@@ -9,6 +9,8 @@ public class LoginUser implements Serializable{
 	private String code;//工号
 	private String name;//名称
 	private Integer isSuperUser;//是否是超级用户
+	private Integer isAdmin;//是否后台用户
+	private Integer isAdminSuper;//是否后台超级用户
 	public String getCode() {
 		return code;
 	}
@@ -26,5 +28,17 @@ public class LoginUser implements Serializable{
 	}
 	public void setIsSuperUser(Integer isSuperUser) {
 		this.isSuperUser = isSuperUser;
+	}
+	public Integer getIsAdmin() {
+		return isAdmin;
+	}
+	public void setIsAdmin(Integer isAdmin) {
+		this.isAdmin = isAdmin;
+	}
+	public Integer getIsAdminSuper() {
+		return isAdminSuper;
+	}
+	public void setIsAdminSuper(Integer isAdminSuper) {
+		this.isAdminSuper = isAdminSuper;
 	}
 }
