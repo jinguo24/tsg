@@ -21,6 +21,7 @@
     <mvc:resources mapping="/css/**" location="/css/" />
     <mvc:resources mapping="/js/**" location="/js/" />
     <mvc:resources mapping="/thirdplugin/**" location="/thirdplugin/" />
+    <mvc:resources mapping="/download/**" location="/download/" />
     
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
     	<property name="interceptors">
@@ -43,10 +44,9 @@
             </list>  
         </property> 
 	</bean> 
-    <bean id="multipartResolver"
-          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <!-- 设置上传文件大小的参数 -->
-        <!--<property name="maxUploadSize" value="1000000"/>-->
+        <property name="maxUploadSize" value="1024000000"/>
     </bean>
 
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">

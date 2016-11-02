@@ -1,8 +1,8 @@
 package com.simple.service;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -110,9 +110,9 @@ public class UserService {
 	}
 	
 	
-	public ResponseInfo validateFile(File file) throws IOException {
-		String suffix = file.getName().substring(file.getName().lastIndexOf(".")+1);
-		return ReadExcel.read(new FileInputStream(file),new ObjectExcutor(){
+	public ResponseInfo validateFile(InputStream inputStream,String suffix) throws IOException {
+		//String suffix = file.getName().substring(file.getName().lastIndexOf(".")+1);
+		return ReadExcel.read(inputStream,new ObjectExcutor(){
 				@Override
 				public Object getObject(List<String> cellValues) {
 						String code = null;

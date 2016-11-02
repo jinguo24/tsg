@@ -89,12 +89,13 @@ public class UserController {
 	 */
 	@RequestMapping(value = "upload", method = RequestMethod.POST)
 	@ResponseBody
-	public String add(HttpServletRequest request, HttpServletResponse response,@RequestParam("file") MultipartFile  files) {
+	public String add(@RequestParam("file") MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
 		try {
-			CommonsMultipartFile cf= (CommonsMultipartFile)files; //这个myfile是MultipartFile的
-	        DiskFileItem fi = (DiskFileItem)cf.getFileItem(); 
-	        File file = fi.getStoreLocation();
-			ResponseInfo ri  = userService.validateFile(file);
+			//CommonsMultipartFile cf= (CommonsMultipartFile)files[0]; //这个myfile是MultipartFile的
+	        //DiskFileItem fi = (DiskFileItem)cf.getFileItem(); 
+	        String fileName = file.getOriginalFilename();
+	        String suffix = fileName.substring(fileName.lastIndexOf(".")+1);
+			ResponseInfo ri  = userService.validateFile(file.getInputStream(),suffix);
 			List<User> users = new ArrayList<>();
 			if ( null != ri && ri.getStatus().getState()) {
 				users =(List<User>)ri.getData();
