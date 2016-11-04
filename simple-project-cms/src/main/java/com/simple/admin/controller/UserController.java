@@ -71,7 +71,8 @@ public class UserController {
 	@ResponseBody
 	public String add(HttpServletRequest request, HttpServletResponse response, User user) {
 		try {
-			user.setPassword(getMD5Password(user.getPassword()));
+			
+			user.setPassword(getMD5Password(EnvPropertiesConfiger.getValue("initPassword")));
 			userService.add(user);
 			return AjaxWebUtil.sendAjaxResponse(request, response, true, "新增成功", user);
 		} catch (Exception e) {
@@ -144,10 +145,10 @@ public class UserController {
 	@ResponseBody
 	public String update(HttpServletRequest request, HttpServletResponse response,User user){
 		try {
-//			User u = userService.findByCode(user.getCode());
-//			if(u!=null){
-//				return AjaxWebUtil.sendAjaxResponse(request, response, false, "工号已经存在", user);
-//			}
+			User u = userService.findByCode(user.getCode());
+			if(u!=null && u.getId() == user.getId()){
+				return AjaxWebUtil.sendAjaxResponse(request, response, false, "工号已经存在", user);
+			}
 			userService.updateByParams(user);
 			return AjaxWebUtil.sendAjaxResponse(request, response, true, "更新成功", user);
 		} catch (Exception e) {
@@ -185,7 +186,7 @@ public class UserController {
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping(value = "resetPwd", method = RequestMethod.GET)
+	@RequestMapping(value = "resetPwd", method = RequestMethod.POST)
 	@ResponseBody
 	public String resetPwd(HttpServletRequest request, HttpServletResponse response,Integer id){
 		try{

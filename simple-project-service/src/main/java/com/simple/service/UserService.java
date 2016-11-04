@@ -11,14 +11,17 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.simple.common.config.EnvPropertiesConfiger;
 import com.simple.common.excel.DownLoadExcel;
 import com.simple.common.excel.DownLoadExcutor;
 import com.simple.common.excel.ObjectExcutor;
 import com.simple.common.excel.ReadExcel;
 import com.simple.common.util.ResponseInfo;
+import com.simple.constant.Constant;
 import com.simple.dao.UserDao;
 import com.simple.model.PageResult;
 import com.simple.model.User;
+import com.simple.weixin.util.MD5Util;
 
 @Service
 public class UserService {
@@ -124,33 +127,23 @@ public class UserService {
 						if (cellValues.size() > 1) {
 								name = StringUtils.trimToNull(cellValues.get(1));
 						}
-						String isSuperUser = null;
-						if (cellValues.size() > 2) {
-							isSuperUser = StringUtils.trimToNull(cellValues.get(2));
-						}
-						
 
 						StringBuffer errormsg = new StringBuffer();
 						boolean ispass = true;
 						User tclass = null;
-						if ( null == code && null == name && null == isSuperUser ) {
+						if ( null == code && null == name ) {
 							return null;
 						}
-						if ( null != code && null != name && null != isSuperUser ) {
-							tclass = new User();
-							try {
-								tclass.setIsSuperUser(Integer.parseInt(isSuperUser));
-							}catch(Exception e) {
-								errormsg.append("列[1]：请填写整数;");
+						if ( null != code && null != name ) {
+							User u = userDao.findByCode(code);
+							if (null != u) {
 								ispass = false;
+								errormsg.append(code+"工号重复;");
+							}else {
+								tclass = new User();
+								tclass.setCode(code);
+								tclass.setName(name);
 							}
-							tclass.setCode(code);
-							tclass.setName(name);
-							//boolean exists = isExists(leaseholderId,bjbh,Integer.parseInt(xn));
-							//if (exists) {
-							//	ispass = false;
-							//	errormsg.append("该租户下的[班级+学年]已经存在;");
-							//}
 						}else {
 							ispass = false;
 							errormsg.append("请填写完全，不要留空白列;");
