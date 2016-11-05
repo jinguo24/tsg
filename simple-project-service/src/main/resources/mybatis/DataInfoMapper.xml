@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dataInfo">
+  <resultMap id="BaseResultMap" type="com.simple.model.DataInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="desc" jdbcType="VARCHAR" property="desc" />
+    <result column="file_url" jdbcType="VARCHAR" property="fileUrl" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="read_count" jdbcType="INTEGER" property="readCount" />
+    <result column="download_count" jdbcType="INTEGER" property="downloadCount" />
+    <result column="book_name" jdbcType="VARCHAR" property="bookName" />
+    <result column="image" jdbcType="VARCHAR" property="image" />
+    <result column="periodical_time" jdbcType="VARCHAR" property="periodicalTime" />
+    <result column="authors" jdbcType="VARCHAR" property="authors" />
+    <result column="tags" jdbcType="VARCHAR" property="tags" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, desc, file_url, create_time, type, read_count, download_count, book_name, 
+    image, periodical_time, authors, tags
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from data_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from data_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.simple.model.DataInfo">
+    insert into data_info (id, name, desc, 
+      file_url, create_time, type, 
+      read_count, download_count, book_name, 
+      image, periodical_time, authors, 
+      tags)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, 
+      #{fileUrl,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER}, 
+      #{readCount,jdbcType=INTEGER}, #{downloadCount,jdbcType=INTEGER}, #{bookName,jdbcType=VARCHAR}, 
+      #{image,jdbcType=VARCHAR}, #{periodicalTime,jdbcType=VARCHAR}, #{authors,jdbcType=VARCHAR}, 
+      #{tags,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.simple.model.DataInfo">
+    insert into data_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="desc != null">
+        desc,
+      </if>
+      <if test="fileUrl != null">
+        file_url,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="readCount != null">
+        read_count,
+      </if>
+      <if test="downloadCount != null">
+        download_count,
+      </if>
+      <if test="bookName != null">
+        book_name,
+      </if>
+      <if test="image != null">
+        image,
+      </if>
+      <if test="periodicalTime != null">
+        periodical_time,
+      </if>
+      <if test="authors != null">
+        authors,
+      </if>
+      <if test="tags != null">
+        tags,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="desc != null">
+        #{desc,jdbcType=VARCHAR},
+      </if>
+      <if test="fileUrl != null">
+        #{fileUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="readCount != null">
+        #{readCount,jdbcType=INTEGER},
+      </if>
+      <if test="downloadCount != null">
+        #{downloadCount,jdbcType=INTEGER},
+      </if>
+      <if test="bookName != null">
+        #{bookName,jdbcType=VARCHAR},
+      </if>
+      <if test="image != null">
+        #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="periodicalTime != null">
+        #{periodicalTime,jdbcType=VARCHAR},
+      </if>
+      <if test="authors != null">
+        #{authors,jdbcType=VARCHAR},
+      </if>
+      <if test="tags != null">
+        #{tags,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.simple.model.DataInfo">
+    update data_info
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="desc != null">
+        desc = #{desc,jdbcType=VARCHAR},
+      </if>
+      <if test="fileUrl != null">
+        file_url = #{fileUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="readCount != null">
+        read_count = #{readCount,jdbcType=INTEGER},
+      </if>
+      <if test="downloadCount != null">
+        download_count = #{downloadCount,jdbcType=INTEGER},
+      </if>
+      <if test="bookName != null">
+        book_name = #{bookName,jdbcType=VARCHAR},
+      </if>
+      <if test="image != null">
+        image = #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="periodicalTime != null">
+        periodical_time = #{periodicalTime,jdbcType=VARCHAR},
+      </if>
+      <if test="authors != null">
+        authors = #{authors,jdbcType=VARCHAR},
+      </if>
+      <if test="tags != null">
+        tags = #{tags,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.simple.model.DataInfo">
+    update data_info
+    set name = #{name,jdbcType=VARCHAR},
+      desc = #{desc,jdbcType=VARCHAR},
+      file_url = #{fileUrl,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      type = #{type,jdbcType=INTEGER},
+      read_count = #{readCount,jdbcType=INTEGER},
+      download_count = #{downloadCount,jdbcType=INTEGER},
+      book_name = #{bookName,jdbcType=VARCHAR},
+      image = #{image,jdbcType=VARCHAR},
+      periodical_time = #{periodicalTime,jdbcType=VARCHAR},
+      authors = #{authors,jdbcType=VARCHAR},
+      tags = #{tags,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  	<select id="selectList" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from data_info
+		where 1=1
+		<if test="bookName != null and bookName != ''"> and book_name like
+			CONCAT('%',#{book_name},'%')</if>
+			<if test="name != null and name != ''"> and name like
+			CONCAT('%',#{name},'%')</if>
+		<if test="type != null"> and type =#{type}
+		</if>
+		order by id desc limit #{startnum},#{pageSize}
+	</select>
+
+	<select id="queryCount" resultType="Integer">
+		select count(1)
+		from data_info where 1=1
+		<if test="bookName != null and bookName != ''"> and book_name like
+			CONCAT('%',#{book_name},'%')</if>
+			<if test="name != null and name != ''"> and name like
+			CONCAT('%',#{name},'%')</if>
+		<if test="type != null"> and type =#{type}
+		</if>
+	</select>
+</mapper>
