@@ -48,7 +48,7 @@ public class EsIndexService {
 		return EsUtil.searchById(indexName, type, indexId, classType);
 	}
 	
-	public List<DataInfo> queryDataInfo(Integer id,String text,Integer type) throws IOException {
+	public List<DataInfo> queryDataInfo(Integer id,String text,Integer type,int pageIndex,int pageSize) throws IOException {
 		BoolQueryBuilder bu = QueryBuilders.boolQuery();
 		if ( null != id && id > 0) {
 			QueryBuilder idbuilder = QueryBuilders.matchQuery("id", String.valueOf(id));
@@ -66,7 +66,10 @@ public class EsIndexService {
 			QueryBuilder tagsbuilder = QueryBuilders.matchQuery("tags", text);
 			bu.should(namebuilder).should(bookNamebuilder).should(descbuilder).should(authorsbuilder).should(tagsbuilder);
 		}
-		return EsUtil.searchList(Constant.INDEX_DATA_NAME, Constant.INDEX_DATA_TYPE_BOOK, bu, DataInfo.class);
+		if ( pageIndex <= 0 ) {
+			pageIndex = 1;
+		}
+		return EsUtil.searchList(Constant.INDEX_DATA_NAME, Constant.INDEX_DATA_TYPE_BOOK,(pageIndex-1)*pageSize,pageSize, bu, DataInfo.class);
 	}
 	
 }

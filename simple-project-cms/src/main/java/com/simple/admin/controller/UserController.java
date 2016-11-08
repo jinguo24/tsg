@@ -20,6 +20,7 @@ import com.simple.common.config.EnvPropertiesConfiger;
 import com.simple.common.util.AjaxWebUtil;
 import com.simple.common.util.ResponseInfo;
 import com.simple.constant.Constant;
+import com.simple.model.DataInfo;
 import com.simple.model.PageResult;
 import com.simple.model.User;
 import com.simple.service.EsIndexService;
@@ -226,7 +227,7 @@ public class UserController {
 	@ResponseBody
 	public String createIndex(HttpServletRequest request, HttpServletResponse response){
 		try {
-			esIndexService.createIndex();
+			esIndexService.createIndex(Constant.INDEX_DATA_NAME);
 			return AjaxWebUtil.sendAjaxResponse(request, response, true, "刪除成功", null);
 		} catch (Exception e) {
 			log.error("更新用户失败", e);
@@ -236,9 +237,9 @@ public class UserController {
 	
 	@RequestMapping(value = "queryIndex", method = RequestMethod.GET)
 	@ResponseBody
-	public String queryIndex(HttpServletRequest request, HttpServletResponse response){
+	public String queryIndex(Integer id,String text,Integer type,int pageIndex,int pageSize,HttpServletRequest request, HttpServletResponse response){
 		try {
-			List<String> rl = esIndexService.queryIndex();
+			List<DataInfo> rl = esIndexService.queryDataInfo(id, text, type,pageIndex,pageSize);
 			return AjaxWebUtil.sendAjaxResponse(request, response, true, "刪除成功", rl);
 		} catch (Exception e) {
 			log.error("更新用户失败", e);
