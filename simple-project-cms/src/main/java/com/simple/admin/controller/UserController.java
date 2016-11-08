@@ -228,6 +228,18 @@ public class UserController {
 	public String createIndex(HttpServletRequest request, HttpServletResponse response){
 		try {
 			esIndexService.createIndex(Constant.INDEX_DATA_NAME);
+			List<DataInfo> infos = new ArrayList<DataInfo>(); 
+			for (int i = 10 ; i < 20 ; i ++) {
+				DataInfo di = new DataInfo();
+				di.setId(i+1);
+				di.setName("阿萨德发"+i);
+				di.setBookName("balk激动死阿的士速递"+i);
+				di.setDesc("撒旦发射点发生的阿啊电风扇地方"+i);
+				di.setAuthors("阿斯兰多夫空军偶"+i);
+				di.setTags("阿斯兰的开房间啊松岛枫iu"+i);
+				infos.add(di);
+			}
+			esIndexService.batchInsertOrUpdateDoc(Constant.INDEX_DATA_NAME, Constant.INDEX_DATA_TYPE_BOOK, infos);
 			return AjaxWebUtil.sendAjaxResponse(request, response, true, "刪除成功", null);
 		} catch (Exception e) {
 			log.error("更新用户失败", e);

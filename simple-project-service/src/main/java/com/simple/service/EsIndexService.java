@@ -59,6 +59,7 @@ public class EsIndexService {
 			bu.must(typebuilder);
 		}
 		if (!StringUtils.isEmpty(text)) {
+			text = new String(text.getBytes("ISO-8859-1"),"UTF-8");
 			QueryBuilder namebuilder = QueryBuilders.matchQuery("name", text);
 			QueryBuilder bookNamebuilder = QueryBuilders.matchQuery("bookName", text);
 			QueryBuilder descbuilder = QueryBuilders.matchQuery("desc", text);
@@ -72,4 +73,23 @@ public class EsIndexService {
 		return EsUtil.searchList(Constant.INDEX_DATA_NAME, Constant.INDEX_DATA_TYPE_BOOK,(pageIndex-1)*pageSize,pageSize, bu, DataInfo.class);
 	}
 	
+	public static void main(String[] args) {
+		EsIndexService es = new EsIndexService();
+		List<DataInfo> infos = new ArrayList<DataInfo>(); 
+		for (int i = 0 ; i < 10 ; i ++) {
+			DataInfo di = new DataInfo();
+			di.setId(i+1);
+			di.setName("阿萨德发"+i);
+			di.setBookName("balk激动死阿的士速递"+i);
+			di.setDesc("撒旦发射点发生的阿啊电风扇地方"+i);
+			di.setAuthors("阿斯兰多夫空军偶"+i);
+			di.setTags("阿斯兰的开房间啊松岛枫iu"+i);
+			infos.add(di);
+		}
+		try {
+			es.batchInsertOrUpdateDoc(Constant.INDEX_DATA_NAME, Constant.INDEX_DATA_TYPE_BOOK, infos);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
