@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.simple.dao.FriendShipLinkDao;
 import com.simple.model.FriendShipLink;
-import com.simple.model.Picture;
 
 @Service
 public class FriendShipLinkService {
@@ -36,5 +35,7 @@ public class FriendShipLinkService {
 	public void delete(Integer id){
 		dao.delete(id);
 	}
+	
+
     
 }

@@ -1,14 +1,11 @@
 package com.simple.admin.controller;
 
-import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.simple.common.config.EnvPropertiesConfiger;
 import com.simple.common.util.AjaxWebUtil;
@@ -26,6 +22,7 @@ import com.simple.common.util.ResponseInfo;
 import com.simple.constant.Constant;
 import com.simple.model.PageResult;
 import com.simple.model.User;
+import com.simple.service.EsIndexService;
 import com.simple.service.UserService;
 import com.simple.weixin.util.MD5Util;
 
@@ -37,6 +34,8 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private EsIndexService esIndexService;
  
 	/**
 	 * 查询用户列表
@@ -221,6 +220,30 @@ public class UserController {
 	
 	public static String getMD5Password(String password) {
 		return MD5Util.MD5Encode(password, Constant.MD5_KEY);
+	}
+	
+	@RequestMapping(value = "createIndex", method = RequestMethod.GET)
+	@ResponseBody
+	public String createIndex(HttpServletRequest request, HttpServletResponse response){
+		try {
+			esIndexService.createIndex();
+			return AjaxWebUtil.sendAjaxResponse(request, response, true, "刪除成功", null);
+		} catch (Exception e) {
+			log.error("更新用户失败", e);
+			return AjaxWebUtil.sendAjaxResponse(request, response, false, "刪除失败", e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value = "queryIndex", method = RequestMethod.GET)
+	@ResponseBody
+	public String queryIndex(HttpServletRequest request, HttpServletResponse response){
+		try {
+			List<String> rl = esIndexService.queryIndex();
+			return AjaxWebUtil.sendAjaxResponse(request, response, true, "刪除成功", rl);
+		} catch (Exception e) {
+			log.error("更新用户失败", e);
+			return AjaxWebUtil.sendAjaxResponse(request, response, false, "刪除失败", e.getMessage());
+		}
 	}
 	
 }

@@ -1,10 +1,9 @@
 package com.simple.model;
 
+import io.searchbox.annotations.JestId;
+
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -12,6 +11,7 @@ public class DataInfo implements Serializable{
 
 	private static final long serialVersionUID = -4749935976851932407L;
 
+	@JestId
 	private Integer id;
 
     private String name;//资料名称
