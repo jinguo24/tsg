@@ -7,6 +7,8 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.simple.common.util.DateUtil;
+
 public class DataInfo implements Serializable{
 
 	private static final long serialVersionUID = -4749935976851932407L;
@@ -37,6 +39,11 @@ public class DataInfo implements Serializable{
     private Integer readCount;//阅读数量
 
     private Integer downloadCount;//下载数量
+    
+    private String category;//分类
+    
+    private Date publishDate;//出版时间
+    private String pulishDateStr;
     
     
     private String[] authorList;
@@ -166,4 +173,27 @@ public class DataInfo implements Serializable{
     public void setDownloadCount(Integer downloadCount) {
         this.downloadCount = downloadCount;
     }
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public Date getPublishDate() {
+		return publishDate;
+	}
+
+	public void setPublishDate(Date publishDate) {
+		this.publishDate = publishDate;
+		if ( null != publishDate) {
+			this.pulishDateStr = DateUtil.date2String(publishDate);
+		}
+	}
+
+	public String getPulishDateStr() {
+		return pulishDateStr;
+	}
 }

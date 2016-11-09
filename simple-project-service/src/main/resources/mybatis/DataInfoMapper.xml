@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.simple.model.DataInfo">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="desc" jdbcType="VARCHAR" property="desc" />
+    <result column="description" jdbcType="VARCHAR" property="desc" />
     <result column="file_url" jdbcType="VARCHAR" property="fileUrl" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="type" jdbcType="INTEGER" property="type" />
@@ -15,10 +15,12 @@
     <result column="periodical_time" jdbcType="VARCHAR" property="periodicalTime" />
     <result column="authors" jdbcType="VARCHAR" property="authors" />
     <result column="tags" jdbcType="VARCHAR" property="tags" />
+    <result column="category" jdbcType="VARCHAR" property="category" />
+    <result column="publish_date" jdbcType="DATE" property="publishDate" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, desc, file_url, create_time, type, read_count, download_count, book_name, 
-    image, periodical_time, authors, tags
+    id, name, description, file_url, create_time, type, read_count, download_count, book_name, 
+    image, periodical_time, authors, tags,category,publish_date
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -35,12 +37,12 @@
       file_url, create_time, type, 
       read_count, download_count, book_name, 
       image, periodical_time, authors, 
-      tags)
+      tags,category,publish_date)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, 
       #{fileUrl,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER}, 
       #{readCount,jdbcType=INTEGER}, #{downloadCount,jdbcType=INTEGER}, #{bookName,jdbcType=VARCHAR}, 
       #{image,jdbcType=VARCHAR}, #{periodicalTime,jdbcType=VARCHAR}, #{authors,jdbcType=VARCHAR}, 
-      #{tags,jdbcType=VARCHAR})
+      #{tags,jdbcType=VARCHAR},#{category,jdbcType=VARCHAR},#{publishDate,jdbcType=DATE})
   </insert>
   <insert id="insertSelective" parameterType="com.simple.model.DataInfo">
     insert into data_info
@@ -84,6 +86,12 @@
       <if test="tags != null">
         tags,
       </if>
+      <if test="category != null">
+        category,
+      </if>
+      <if test="publishDate != null">
+        publish_date
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -124,6 +132,12 @@
       </if>
       <if test="tags != null">
         #{tags,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null">
+        #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="publishDate != null">
+        #{publishDate,jdbcType=DATE}
       </if>
     </trim>
   </insert>
@@ -166,6 +180,12 @@
       <if test="tags != null">
         tags = #{tags,jdbcType=VARCHAR},
       </if>
+      <if test="category != null">
+        category = #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="publishDate != null">
+        publish_date = #{publishDate,jdbcType=DATE}
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -182,7 +202,9 @@
       image = #{image,jdbcType=VARCHAR},
       periodical_time = #{periodicalTime,jdbcType=VARCHAR},
       authors = #{authors,jdbcType=VARCHAR},
-      tags = #{tags,jdbcType=VARCHAR}
+      tags = #{tags,jdbcType=VARCHAR},
+      category = #{category,jdbcType=VARCHAR},
+      publish_date = #{publishDate,jdbcType=DATE}
     where id = #{id,jdbcType=INTEGER}
   </update>
   
@@ -191,23 +213,17 @@
 		<include refid="Base_Column_List" />
 		from data_info
 		where 1=1
-		<if test="bookName != null and bookName != ''"> and book_name like
-			CONCAT('%',#{book_name},'%')</if>
-			<if test="name != null and name != ''"> and name like
-			CONCAT('%',#{name},'%')</if>
-		<if test="type != null"> and type =#{type}
-		</if>
+		<if test="bookName != null and bookName != ''"> and book_name like CONCAT('%',#{book_name},'%')</if>
+		<if test="name != null and name != ''"> and name like CONCAT('%',#{name},'%')</if>
+		<if test="type != null"> and type =#{type}</if>
 		order by id desc limit #{startnum},#{pageSize}
 	</select>
 
 	<select id="queryCount" resultType="Integer">
 		select count(1)
 		from data_info where 1=1
-		<if test="bookName != null and bookName != ''"> and book_name like
-			CONCAT('%',#{book_name},'%')</if>
-			<if test="name != null and name != ''"> and name like
-			CONCAT('%',#{name},'%')</if>
-		<if test="type != null"> and type =#{type}
-		</if>
+		<if test="bookName != null and bookName != ''"> and book_name like CONCAT('%',#{book_name},'%')</if>
+		<if test="name != null and name != ''"> and name like CONCAT('%',#{name},'%')</if>
+		<if test="type != null"> and type =#{type}</if>
 	</select>
 </mapper>

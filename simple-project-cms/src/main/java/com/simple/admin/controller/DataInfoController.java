@@ -1,5 +1,7 @@
 package com.simple.admin.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.simple.common.util.AjaxWebUtil;
+import com.simple.model.BookCategory;
 import com.simple.model.DataInfo;
 import com.simple.model.PageResult;
+import com.simple.service.BookCategoryService;
 import com.simple.service.DataInfoService;
 
 @Controller
@@ -24,6 +28,8 @@ public class DataInfoController {
 	
 	@Autowired
 	private DataInfoService dataInfoService;
+	@Autowired
+	private BookCategoryService bookCategoryService;
 	
 	
 	/**
@@ -126,4 +132,39 @@ public class DataInfoController {
 		}
 	}
 	
+	/**
+	 * 查询根分类
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "queryRootCategorys", method = RequestMethod.GET)
+	@ResponseBody
+	public String queryRootCategorys(HttpServletRequest request, HttpServletResponse response){
+		try {
+			List<BookCategory> categorys = bookCategoryService.findRootList();
+			return AjaxWebUtil.sendAjaxResponse(request, response, true, "查询成功", categorys);
+		} catch (Exception e) {
+			log.error("查询失败", e);
+			return AjaxWebUtil.sendAjaxResponse(request, response, false, "查询失败", e.getMessage());
+		}
+	}
+	
+	/**
+	 * 查询子分类
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "queryChildCategorys", method = RequestMethod.GET)
+	@ResponseBody
+	public String queryChildCategorys(String code,HttpServletRequest request, HttpServletResponse response){
+		try {
+			List<BookCategory> categorys = bookCategoryService.findChildren(code);
+			return AjaxWebUtil.sendAjaxResponse(request, response, true, "查询成功", categorys);
+		} catch (Exception e) {
+			log.error("查询失败", e);
+			return AjaxWebUtil.sendAjaxResponse(request, response, false, "查询失败", e.getMessage());
+		}
+	}
 }
