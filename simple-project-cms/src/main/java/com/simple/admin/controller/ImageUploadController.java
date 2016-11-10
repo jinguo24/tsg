@@ -1,7 +1,12 @@
 package com.simple.admin.controller;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +14,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -18,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.simple.common.config.EnvPropertiesConfiger;
 import com.simple.common.image.Thumbnailator;
@@ -26,6 +33,7 @@ import com.simple.common.util.DateUtil;
 import com.simple.common.util.FileUploadUtil;
 import com.simple.common.util.ImageHandleUtil;
 import com.simple.common.util.PrimaryKeyUtil;
+import com.simple.constant.Constant;
 import com.simple.fileencrypt.FileEncryptUtil;
 @Controller
 @RequestMapping(value = "/image")
@@ -48,7 +56,7 @@ public class ImageUploadController {
 				}
 				String filepath = foler+ File.separator + PrimaryKeyUtil.getUUID() ;
 				String path = filepath+".jpg";
-				Thumbnailator.scale(file.getInputStream(), widht, height, 1.0f, 0, filepath+".jpg");
+				Thumbnailator.scale(file.getInputStream(), widht, height, 1.0f, 0, EnvPropertiesConfiger.getValue("uploadDir")+filepath+".jpg");
 				/**不需要裁剪正方形
 				long time1 = System.currentTimeMillis();
 				System.out.println(">>>>img time1 : "+(time1-timestart));
@@ -87,8 +95,12 @@ public class ImageUploadController {
 			}
 			String filepath = foler+ File.separator + PrimaryKeyUtil.getUUID() ;
 			String path = filepath+"."+suffix;
-			new FileEncryptUtil("simplefileencryptkey").encrypt(file.getInputStream(), path);
+			String tempfilepath = EnvPropertiesConfiger.getValue("uploadDir")+filepath+"_temp."+suffix;
+	        File f = new File(tempfilepath);
+	        file.transferTo(f);
+			new FileEncryptUtil(com.simple.fileencrypt.Constant.FILE_ENCRYPT_KEY).encrypt(tempfilepath, EnvPropertiesConfiger.getValue("uploadDir")+path);
 			images.add(path);
+			//f.delete();
 			return AjaxWebUtil.sendAjaxResponse(request, response, true,"上传成功", images);
 		}catch(Exception e) {
 			log.error("上传失败",e);
@@ -96,4 +108,17 @@ public class ImageUploadController {
 		}
 	}
 	
+	public static void main(String[] args) {
+		String tempfilepath = "C:\\Users\\zhengfy1\\Downloads\\ea19ea94-352b-4925-b62a-c216725cdc71_temp.pdf";
+		String filepaht = "C:\\Users\\zhengfy1\\Downloads\\ea19ea94-352b-4925-b62a-c216725cdc71.pdf";
+		try {
+			new FileEncryptUtil(com.simple.fileencrypt.Constant.FILE_ENCRYPT_KEY).encrypt(tempfilepath, filepaht);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

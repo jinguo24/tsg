@@ -32,6 +32,10 @@ public class EsIndexService {
 		EsUtil.deleteIndex(indexName);
 	}
 	
+	public void insertOrUpdateDoc(String indexName,String type,Object object) throws Exception {
+		EsUtil.insertOrUpdateDoc(indexName, type, object);
+	}
+	
 	public void batchInsertOrUpdateDoc(String indexName,String type,List infos) throws Exception {
 		EsUtil.batchInsertOrUpdateDoc(indexName, type, infos);
 	}

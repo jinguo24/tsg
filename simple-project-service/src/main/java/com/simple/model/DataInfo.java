@@ -43,6 +43,7 @@ public class DataInfo implements Serializable{
     private String category;//分类
     
     private Date publishDate;//出版时间
+    private String commitDate;//提交的出版时间
     private String pulishDateStr;
     
     
@@ -195,5 +196,13 @@ public class DataInfo implements Serializable{
 
 	public String getPulishDateStr() {
 		return pulishDateStr;
+	}
+
+	public String getCommitDate() {
+		return commitDate;
+	}
+
+	public void setCommitDate(String commitDate) {
+		this.commitDate = commitDate;
 	}
 }

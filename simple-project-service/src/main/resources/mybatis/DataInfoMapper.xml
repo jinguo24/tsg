@@ -32,8 +32,8 @@
     delete from data_info
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.simple.model.DataInfo">
-    insert into data_info (id, name, desc, 
+  <insert id="insert" parameterType="com.simple.model.DataInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into data_info (id, name, description, 
       file_url, create_time, type, 
       read_count, download_count, book_name, 
       image, periodical_time, authors, 
@@ -54,7 +54,7 @@
         name,
       </if>
       <if test="desc != null">
-        desc,
+        description,
       </if>
       <if test="fileUrl != null">
         file_url,
@@ -148,7 +148,7 @@
         name = #{name,jdbcType=VARCHAR},
       </if>
       <if test="desc != null">
-        desc = #{desc,jdbcType=VARCHAR},
+        description = #{desc,jdbcType=VARCHAR},
       </if>
       <if test="fileUrl != null">
         file_url = #{fileUrl,jdbcType=VARCHAR},
@@ -192,7 +192,7 @@
   <update id="updateByPrimaryKey" parameterType="com.simple.model.DataInfo">
     update data_info
     set name = #{name,jdbcType=VARCHAR},
-      desc = #{desc,jdbcType=VARCHAR},
+      description = #{desc,jdbcType=VARCHAR},
       file_url = #{fileUrl,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       type = #{type,jdbcType=INTEGER},
