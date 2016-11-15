@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.simple.admin.util.LoginUserUtil;
 import com.simple.common.config.EnvPropertiesConfiger;
 import com.simple.common.util.AjaxWebUtil;
 import com.simple.common.util.ResponseInfo;
@@ -221,5 +222,23 @@ public class UserController {
 	
 	public static String getMD5Password(String password) {
 		return MD5Util.MD5Encode(password, Constant.MD5_KEY);
+	}
+	
+	/**
+	 * 获取当前用户信息
+	 * @param request
+	 * @param response
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "currentUser", method = RequestMethod.GET)
+	@ResponseBody
+	public String currentUser(HttpServletRequest request, HttpServletResponse response){
+		try {
+			return AjaxWebUtil.sendAjaxResponse(request, response, true, "查询成功", LoginUserUtil.getCurrentUser(request));
+		} catch (Exception e) {
+			log.error("查询用户失败", e);
+			return AjaxWebUtil.sendAjaxResponse(request, response, false, "查询失败", e.getMessage());
+		}
 	}
 }
